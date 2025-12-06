@@ -1,0 +1,22 @@
+Placeholder untuk gambar wood-texture.jpg
+
+Untuk membuat sistem login admin yang lengkap, Anda perlu:
+
+1. Download gambar wood texture dari internet (contoh: wood-texture.jpg)
+2. Simpan di folder public/images/
+3. Ganti nama file menjadi wood-texture.jpg
+
+Atau gunakan CSS background color saja tanpa gambar.
+
+Sistem login admin sudah siap digunakan dengan:
+- Controller: AdminAuthController.php
+- Middleware: AdminMiddleware.php
+- Routes: Ditambahkan di routes/web.php
+- Views: login.blade.php dan dashboard.blade.php
+
+Cara test:
+1. Jalankan php artisan serve
+2. Buka http://localhost:8000/admin/login
+3. Login dengan username: admin, password: admin123
+4. Akan redirect ke dashboard
+5. Klik logout untuk keluar

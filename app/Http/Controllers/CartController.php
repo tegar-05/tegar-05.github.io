@@ -9,11 +9,16 @@ class CartController extends Controller {
   }
 
   public function add(Request $r) {
+    $r->validate([
+      'menu_id' => 'required|exists:menus,id',
+      'qty' => 'required|integer|min:1',
+    ]);
+
     $menu = \App\Models\Menu::findOrFail($r->menu_id);
     $cart = session('cart', []);
     $key = $menu->id;
-    if(isset($cart[$key])) $cart[$key]['qty'] += $r->qty ?? 1;
-    else $cart[$key] = ['id'=>$menu->id,'name'=>$menu->name,'price'=>$menu->price,'qty'=>$r->qty ?? 1,'image'=>$menu->image];
+    if(isset($cart[$key])) $cart[$key]['qty'] += $r->qty;
+    else $cart[$key] = ['id'=>$menu->id,'name'=>$menu->name,'price'=>$menu->price,'qty'=>$r->qty,'image'=>$menu->image];
     session(['cart'=>$cart]);
     return back()->with('success','Added to cart');
   }

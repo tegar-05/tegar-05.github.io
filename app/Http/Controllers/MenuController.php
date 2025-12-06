@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 
 class MenuController extends Controller {
   public function index() {
-    $menus = Menu::paginate(12);
+    $menus = Menu::with('category')->paginate(12);
     return view('frontend.menu.index', compact('menus'));
   }
 }
