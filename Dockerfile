@@ -1,26 +1,16 @@
-FROM php:8.2-fpm
+FROM serversideup/php:8.2-fpm-nginx
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    unzip \
-    libicu-dev \
-    && docker-php-ext-install intl zip pdo pdo_mysql
-
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# Enable PHP extensions
+RUN enable-php-extension intl zip
 
 WORKDIR /var/www/html
 
-# Copy all files
 COPY . .
 
-# Install composer dependencies
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader
 
-# Laravel permissions
-RUN chmod -R 777 storage bootstrap/cache
+RUN php artisan config:clear && \
+    php artisan route:clear && \
+    php artisan view:clear
 
-EXPOSE 8080
-
-CMD php artisan serve --host=0.0.0.0 --port=8080
+CMD ["php-fpm"]
