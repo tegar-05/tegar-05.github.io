@@ -1,4 +1,4 @@
-@extends('admin.layouts.main')
+@extends('admin.layout')
 
 @section('content')
 <h1 class="text-2xl font-bold mb-6">Edit Menu</h1>

@@ -23,7 +23,7 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 // Reservation
 Route::get('/reservation', [HomeController::class, 'reservation'])->name('reservation');
-Route::post('/reservation/submit', [ReservationController::class, 'submit'])->name('reservation.submit');
+Route::post('/reservation/submit', [ReservationController::class, 'submit'])->middleware('throttle:5,1')->name('reservation.submit');
 
 // Order
 Route::get('/order', [HomeController::class, 'order'])->name('order');
@@ -58,7 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // ==============================
 
 Route::get('/admin/login', [AdminAuthController::class, 'loginPage'])->name('admin.login');
-Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post');
+Route::post('/admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:3,1')->name('admin.login.post');
 Route::get('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
 
@@ -82,13 +82,24 @@ Route::middleware(['admin'])
         Route::get('/orders-export-xlsx', [OrderController::class, 'exportXlsx'])->name('orders.exportXlsx');
 
         // MENU MANAGEMENT
-        Route::prefix('menu')->name('menu.')->group(function () {
-            Route::get('/', [AdminMenuController::class, 'index'])->name('index');
-            Route::get('/create', [AdminMenuController::class, 'create'])->name('create');
-            Route::post('/store', [AdminMenuController::class, 'store'])->name('store');
-            Route::get('/edit/{id}', [AdminMenuController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [AdminMenuController::class, 'update'])->name('update');
-            Route::delete('/delete/{id}', [AdminMenuController::class, 'destroy'])->name('delete');
-        });
+        Route::resource('menus', App\Http\Controllers\Admin\AdminMenuController::class);
+        Route::get('menus-export', [App\Http\Controllers\Admin\AdminMenuController::class, 'export'])->name('menus.export');
+
+        // PRODUCT MANAGEMENT
+        Route::resource('products', App\Http\Controllers\Admin\AdminProductController::class);
+        Route::get('products-export', [App\Http\Controllers\Admin\AdminProductController::class, 'export'])->name('products.export');
+
+        // FLORIST MANAGEMENT
+        Route::resource('florists', App\Http\Controllers\Admin\AdminFloristController::class);
+        Route::get('florists-export', [App\Http\Controllers\Admin\AdminFloristController::class, 'export'])->name('florists.export');
+
+        // CATEGORY MANAGEMENT
+        Route::resource('categories', App\Http\Controllers\Admin\AdminCategoryController::class);
+        Route::get('categories-export', [App\Http\Controllers\Admin\AdminCategoryController::class, 'export'])->name('categories.export');
+
+        // SLIDER MANAGEMENT
+        Route::resource('sliders', App\Http\Controllers\Admin\AdminSliderController::class);
+        Route::post('sliders-update-order', [App\Http\Controllers\Admin\AdminSliderController::class, 'updateOrder'])->name('sliders.updateOrder');
+        Route::get('sliders-export', [App\Http\Controllers\Admin\AdminSliderController::class, 'export'])->name('sliders.export');
 
     });

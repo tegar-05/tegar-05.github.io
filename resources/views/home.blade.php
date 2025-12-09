@@ -43,14 +43,14 @@
         <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a href="{{ route('reservation') }}"
                class="px-8 py-4 bg-[#7AA374] text-white rounded-full text-lg shadow-lg
-                      hover:bg-[#D98C8C] transition-all duration-300 hover:scale-105
+                      hover:bg-[#D98C8C] hover:shadow-xl transition-all duration-300 hover:scale-105
                       tracking-wide font-semibold focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2"
                aria-label="Reserve a table at Madame Djeli">
                 Reserve Now
             </a>
             <a href="{{ route('menu') }}"
-               class="px-8 py-4 bg-transparent border-2 border-[#F6F1EA] text-[#F6F1EA] rounded-full text-lg
-                      hover:bg-[#F6F1EA] hover:text-[#402A1E] transition-all duration-300 hover:scale-105
+               class="px-8 py-4 bg-transparent border-2 border-[#F6F1EA] text-[#F6F1EA] rounded-xl text-lg
+                      hover:bg-[#F6F1EA] hover:text-[#402A1E] hover:shadow-xl transition-all duration-300 hover:scale-105
                       tracking-wide font-semibold focus:ring-2 focus:ring-[#F6F1EA] focus:ring-offset-2"
                aria-label="View our menu">
                 See Menu
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 {{-- ============================
      SECTION 2 — Signature & Flores Highlights
 =============================== --}}
-<section class="py-28 bg-[#F6F1EA] relative overflow-hidden">
+<section class="py-24 bg-[#F6F1EA] relative overflow-hidden">
 
     {{-- Soft floral shadows --}}
     <img src="/images/floral/floral-soft1.png"
@@ -108,9 +108,9 @@ document.addEventListener("DOMContentLoaded", () => {
         {{-- Signature & Flores Products --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse($signatureProducts as $product)
-                <div class="group relative bg-white rounded-3xl overflow-hidden shadow-lg
-                            hover:shadow-2xl hover:-translate-y-2 transition-all duration-700
-                            focus-within:ring-2 focus-within:ring-[#7AA374] focus-within:ring-offset-2 rounded-3xl">
+                <div class="group relative bg-white rounded-xl overflow-hidden shadow-lg
+                            hover:shadow-xl hover:-translate-y-2 transition-all duration-700
+                            focus-within:ring-2 focus-within:ring-[#7AA374] focus-within:ring-offset-2">
 
                     {{-- Image --}}
                     <div class="overflow-hidden relative">
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             </p>
                         @endif
                         <a href="{{ route('menu') }}?category={{ $product->category }}"
-                           class="inline-block mt-4 px-6 py-2 bg-[#7AA374] text-white rounded-full text-sm font-semibold
+                           class="inline-block mt-4 px-8 py-4 bg-[#7AA374] text-white rounded-full text-sm font-semibold
                                   hover:bg-[#D98C8C] hover:scale-105 transition-all duration-300
                                   focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2"
                            aria-label="View details for {{ $product->name }}">
@@ -165,8 +165,8 @@ document.addEventListener("DOMContentLoaded", () => {
         {{-- CTA Button --}}
         <div class="text-center mt-16">
             <a href="{{ route('menu') }}"
-               class="px-10 py-4 bg-[#7AA374] text-white rounded-full text-lg shadow-lg
-                      hover:bg-[#D98C8C] transition-all duration-300 hover:scale-105
+               class="px-8 py-4 bg-[#7AA374] text-white rounded-full text-lg shadow-lg
+                      hover:bg-[#D98C8C] hover:shadow-xl transition-all duration-300 hover:scale-105
                       font-semibold">
                 Explore Full Menu
             </a>
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
 {{-- ===========================================
      SECTION 4 — ULTRA PREMIUM FLORIST SHOWCASE
 ============================================== --}}
-<section class="relative py-28 bg-[#FAF7F2] overflow-hidden" id="floral-showcase">
+<section class="relative py-24 bg-[#FAF7F2] overflow-hidden" id="floral-showcase">
 
     <!-- Floating Petals / Premium Particle Effect -->
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <!-- CTA -->
         <div class="text-center mt-16 animate-fadein-slow">
             <a href="{{ route('florist') }}"
-               class="px-12 py-4 bg-[#D4A373] text-white rounded-full text-lg font-semibold shadow-xl
+               class="px-8 py-4 bg-[#D4A373] text-white rounded-full text-lg font-semibold shadow-xl
                       hover:bg-[#c08d60] hover:shadow-2xl hover:scale-110 transition-all duration-500">
                 Explore Full Florist Collection
             </a>
@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 {{-- ===========================================
      SECTION 5 — THE MADAME DJELI EXPERIENCE
 ============================================== --}}
-<section class="relative py-32 bg-[#F3EEE8] overflow-hidden">
+<section class="relative py-24 bg-[#F3EEE8] overflow-hidden">
 
     <!-- Floral Soft Shadows -->
     <img src="/images/floral/floral-soft1.png"
@@ -450,8 +450,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 </p>
 
                 <a href="{{ route('about') }}"
-                   class="px-10 py-4 bg-[#D4A373] text-white text-lg rounded-full shadow-lg
-                          hover:bg-[#c08d60] hover:scale-105 hover:shadow-2xl transition-all duration-500">
+                   class="px-8 py-4 bg-[#D4A373] text-white text-lg rounded-full shadow-lg
+                          hover:bg-[#c08d60] hover:scale-105 hover:shadow-xl transition-all duration-500">
                     Learn More About Us
                 </a>
             </div>
@@ -473,7 +473,7 @@ document.addEventListener("mousemove", function(e) {
 {{-- ============================
      SECTION 6 — RESERVATION PREMIUM
 =============================== --}}
-<section class="relative py-28 overflow-hidden">
+<section class="relative py-24 overflow-hidden">
 
     <!-- Background floral texture -->
     <div class="absolute inset-0 bg-[url('/images/bg-texture-gold.jpg')] bg-cover bg-center opacity-20"></div>
@@ -550,7 +550,7 @@ document.addEventListener("mousemove", function(e) {
 {{-- ============================
      SECTION 8 — CINEMATIC GALLERY
 =============================== --}}
-<section class="relative py-28 bg-[#faf6ef] overflow-hidden">
+<section class="relative py-24 bg-[#faf6ef] overflow-hidden">
 
     <!-- Soft floral decorations -->
     <img src="/images/floral/floral-soft3.png"

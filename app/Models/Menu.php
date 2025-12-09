@@ -16,6 +16,7 @@ class Menu extends Model
         'description',
         'price',
         'image',
+        'category_id',
         'is_popular',
         'is_active'
     ];
@@ -28,5 +29,13 @@ class Menu extends Model
                 $item->slug = Str::slug($item->name) . '-' . time();
             }
         });
+    }
+
+    /**
+     * Relasi ke category
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

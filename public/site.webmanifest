@@ -1,0 +1,43 @@
+{
+    "name": "Madame Djeli Cafe & Flores",
+    "short_name": "Madame Djeli",
+    "description": "Madame Djeli menghadirkan pengalaman unik menggabungkan aroma kopi pilihan dengan keindahan seni floral. Tempat premium untuk menikmati kopi, makanan, dan rangkaian bunga di Bandung.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#faf6ef",
+    "theme_color": "#7AA374",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "id-ID",
+    "categories": ["food", "lifestyle", "shopping"],
+    "icons": [
+        {
+            "src": "/images/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Menu",
+            "short_name": "Menu",
+            "description": "Lihat menu kopi dan makanan kami",
+            "url": "/menu",
+            "icons": [{ "src": "/images/menu-icon.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "Reservation",
+            "short_name": "Reservasi",
+            "description": "Buat reservasi meja",
+            "url": "/reservation",
+            "icons": [{ "src": "/images/reservation-icon.png", "sizes": "96x96" }]
+        }
+    ]
+}

@@ -72,6 +72,10 @@
         <a href="{{ route('admin.dashboard') }}">Dashboard</a>
         <a href="{{ route('admin.orders.index') }}">Orders</a>
         <a href="{{ route('admin.menu.index') }}">Menu</a>
+        <a href="{{ route('admin.products.index') }}">Products</a>
+        <a href="{{ route('admin.florists.index') }}">Florists</a>
+        <a href="{{ route('admin.categories.index') }}">Categories</a>
+        <a href="{{ route('admin.sliders.index') }}">Sliders</a>
     </div>
 
     <div class="content">

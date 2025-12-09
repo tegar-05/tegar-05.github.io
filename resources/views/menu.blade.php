@@ -75,7 +75,7 @@
 
                         <!-- Hover Overlay with Add to Cart -->
                         <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                            <button class="bg-[#7AA374] text-white px-6 py-3 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#D98C8C] focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2"
+                            <button class="bg-[#7AA374] text-white px-8 py-4 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#D98C8C] hover:shadow-xl focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2"
                                     aria-label="Add {{ $product->name }} to cart">
                                 Add to Cart
                             </button>
@@ -125,6 +125,16 @@
             <div class="mt-12 flex justify-center">
                 {{ $products->appends(request()->query())->links() }}
             </div>
+
+            {{-- Meta next/prev for SEO --}}
+            @if($products->hasPages())
+                @if($products->currentPage() > 1)
+                    <link rel="prev" href="{{ $products->url($products->currentPage() - 1) }}">
+                @endif
+                @if($products->hasMorePages())
+                    <link rel="next" href="{{ $products->url($products->currentPage() + 1) }}">
+                @endif
+            @endif
         @endif
     </div>
 </section>

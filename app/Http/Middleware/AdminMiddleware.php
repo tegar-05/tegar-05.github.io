@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Session;
 
 class AdminMiddleware
 {
-        public function handle($request, Closure $next)
+    public function handle($request, Closure $next)
     {
-        if (!session()->has('admin_logged_in')) {
+        if (!auth()->check() || auth()->user()->role !== 'admin') {
             return redirect()->route('admin.login')->with('error', 'Silakan login.');
         }
         return $next($request);

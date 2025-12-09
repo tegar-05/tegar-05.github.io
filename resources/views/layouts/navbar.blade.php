@@ -45,7 +45,7 @@
                 <i class="fa-regular fa-heart text-xl"></i>
             </button>
             <a href="/reservation"
-               class="hidden md:block bg-[#0c4740] text-white px-5 py-2 rounded-full text-sm font-serif border border-[#b59a54]/40
+               class="hidden md:block bg-[#0c4740] text-white px-8 py-4 rounded-full text-sm font-serif border border-[#b59a54]/40
                hover:bg-[#145c53] hover:shadow-[0_0_8px_#b59a54] transition-all duration-500 min-h-[44px] flex items-center">
                 Book Table
             </a>
@@ -57,7 +57,7 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2" class="md:hidden bg-white/95 backdrop-blur-xl border-t border-[#d9c48c]/40">
+    <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2" class="bg-white/95 backdrop-blur-xl border-t border-[#d9c48c]/40">
         <ul class="flex flex-col items-center gap-6 py-6 font-serif text-lg text-[#0c4740]">
             @foreach (['Home'=>'/', 'Menu'=>'/menu', 'Florist'=>'/florist', 'Reservation'=>'/reservation', 'About'=>'/about'] as $name => $url)
                 <li>

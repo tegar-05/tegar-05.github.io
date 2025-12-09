@@ -19,6 +19,7 @@ class Product extends Model
         'is_signature',
         'is_flores',
         'is_active',
+        'slug',
     ];
 
     protected $casts = [
@@ -29,12 +30,28 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::saving(function ($model) {
+            $model->slug = \Illuminate\Support\Str::slug($model->name);
+        });
+    }
+
     /**
      * Relasi ke tabel categories
      */
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
     /**
