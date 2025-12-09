@@ -1,16 +1,28 @@
 FROM serversideup/php:8.2-fpm-nginx
 
-# Enable PHP extensions
-RUN enable-php-extension intl zip
+WORKDIR /var/www/html
+
+COPY . .
+
+RUN composer install --no-interaction --prefer-dist
+
+RUN php artisan key:generate || true
+RUN php artisan storage:link || true
+
+EXPOSE 80
+
+CMD ["php-fpm"]
+FROM serversideup/php:8.2-fpm-nginx
 
 WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-interaction --prefer-dist
 
-RUN php artisan config:clear && \
-    php artisan route:clear && \
-    php artisan view:clear
+RUN php artisan key:generate || true
+RUN php artisan storage:link || true
+
+EXPOSE 80
 
 CMD ["php-fpm"]
