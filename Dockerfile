@@ -1,6 +1,4 @@
-FROM serversideup/php:8.2-fpm-nginx
-
-ENV PHP_EXTENSIONS="intl pdo_mysql zip gd"
+FROM serversideup/php:8.2-fpm-nginx-intl
 
 WORKDIR /var/www/html
 
