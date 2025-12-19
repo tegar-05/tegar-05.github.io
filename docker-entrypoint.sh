@@ -1,9 +1,7 @@
 #!/bin/sh
 set -e
 
-echo "Starting Laravel container..."
-
-# Pastikan Laravel key ada
+# Generate app key jika belum ada
 php artisan key:generate || true
 
 # Clear cache dan config (setelah env MySQL tersedia)
