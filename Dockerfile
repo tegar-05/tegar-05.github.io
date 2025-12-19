@@ -1,6 +1,9 @@
-FROM serversideup/php:8.2-fpm-nginx-intl
+FROM serversideup/php:8.2-fpm-nginx
 
 WORKDIR /var/www/html
+
+# Aktifkan extension yang dibutuhkan (TERMASUK intl)
+ENV PHP_EXTENSIONS="intl pdo_mysql zip gd"
 
 COPY . .
 
