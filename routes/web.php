@@ -3,11 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminAuthController;
-use App\Http\Controllers\AdminMenuController;
+use App\Http\Controllers\Admin\AdminMenuController;
 use App\Http\Controllers\Admin\OrderController;
 
 
@@ -28,9 +29,18 @@ Route::post('/reservation/submit', [ReservationController::class, 'submit'])->mi
 // Order
 Route::get('/order', [HomeController::class, 'order'])->name('order');
 
+// Cart
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/update/{key}', [CartController::class, 'update'])->name('cart.update');
+Route::patch('/cart/update-quantity/{product_id}', [CartController::class, 'updateQuantity'])->name('cart.updateQuantity');
+Route::delete('/cart/remove/{product_id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+
 // Checkout
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::get('/checkout/success/{order}', [CheckoutController::class, 'success'])->name('checkout.success');
 
 // Payment
 Route::post('/payment/process', [PaymentController::class, 'process'])->name('payment.process');
@@ -57,7 +67,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // ADMIN AUTH (Login / Logout)
 // ==============================
 
-Route::get('/admin/login', [AdminAuthController::class, 'loginPage'])->name('admin.login');
+Route::middleware(['admin.guest'])->group(function () {
+    Route::get('/admin/login', [AdminAuthController::class, 'loginPage'])->name('admin.login');
+});
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->middleware('throttle:3,1')->name('admin.login.post');
 Route::get('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
@@ -66,7 +78,7 @@ Route::get('/admin/logout', [AdminAuthController::class, 'logout'])->name('admin
 // ADMIN (Protected Routes)
 // ==============================
 
-Route::middleware(['admin'])
+Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {

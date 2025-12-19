@@ -44,9 +44,12 @@ class Order extends Model
     {
         return match($this->status) {
             'pending' => 'bg-yellow-300 text-yellow-800',
-            'processing' => 'bg-blue-300 text-blue-800',
-            'delivering' => 'bg-indigo-300 text-indigo-800',
-            'completed' => 'bg-green-300 text-green-800',
+            'awaiting_payment' => 'bg-orange-300 text-orange-800',
+            'pending_payment' => 'bg-blue-300 text-blue-800',
+            'processing' => 'bg-indigo-300 text-indigo-800',
+            'delivering' => 'bg-purple-300 text-purple-800',
+            'paid' => 'bg-green-300 text-green-800',
+            'completed' => 'bg-emerald-300 text-emerald-800',
             'cancelled' => 'bg-red-300 text-red-800',
             default => 'bg-gray-300 text-gray-800',
         };

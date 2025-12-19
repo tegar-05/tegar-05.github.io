@@ -22,7 +22,7 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'payment_method' => 'required|in:cod,bank_transfer',
+            'payment_method' => 'required|in:cod,bank_transfer,midtrans',
             'customer_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
             'customer_phone' => 'required|string|regex:/^[0-9+\-\s]+$/|max:20',
             'customer_address' => 'required|string|max:500|min:10',

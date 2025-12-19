@@ -52,7 +52,7 @@ class OrderController extends Controller
     public function updateStatus(Request $request, Order $order)
     {
         $request->validate([
-            'status' => 'required|in:pending,completed,canceled'
+            'status' => 'required|in:pending,processing,delivering,completed,cancelled'
         ]);
 
         $order->update(['status'=>$request->status]);
@@ -66,7 +66,7 @@ class OrderController extends Controller
         return [
             'pending' => Order::where('status','pending')->count(),
             'completed' => Order::where('status','completed')->count(),
-            'canceled' => Order::where('status','canceled')->count(),
+            'cancelled' => Order::where('status','cancelled')->count(),
         ];
     }
 }

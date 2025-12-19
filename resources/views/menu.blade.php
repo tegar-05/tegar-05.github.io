@@ -7,12 +7,12 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 max-w-6xl mx-auto px-6">
         @foreach ([
-            ['name'=>'Wagyu Steak','price'=>'145.000','img'=>'/images/food1.jpg'],
-            ['name'=>'Grilled Salmon','price'=>'98.000','img'=>'/images/food2.jpg'],
-            ['name'=>'Chicken Rice','price'=>'42.000','img'=>'/images/food3.jpg']
+            ['name'=>'Wagyu Steak','price'=>'145.000','img'=>'/images/dish1.png'],
+            ['name'=>'Grilled Salmon','price'=>'98.000','img'=>'/images/dish2.png'],
+            ['name'=>'Chicken Rice','price'=>'42.000','img'=>'/images/dish3.png']
         ] as $menu)
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-2xl hover:-translate-y-1 transform transition-all duration-300 animate-fade-in">
-            <img src="{{ $menu['img'] }}" class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500">
+            <img src="{{ $menu['img'] }}" alt="{{ $menu['name'] }} - Premium dish at Madame Djeli" class="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
             <div class="p-6">
                 <h3 class="text-xl font-bold mb-1">{{ $menu['name'] }}</h3>
                 <p class="text-yellow-700 font-semibold text-lg mb-4">Rp {{ $menu['price'] }}</p>
@@ -64,7 +64,7 @@
         </div>
 
         <!-- Products Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             @forelse($products as $product)
                 <div class="bg-white rounded-2xl shadow-lg overflow-hidden group hover:shadow-2xl hover:-translate-y-2 transform transition-all duration-300 relative">
                     <!-- Product Image -->
@@ -75,10 +75,15 @@
 
                         <!-- Hover Overlay with Add to Cart -->
                         <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                            <button class="bg-[#7AA374] text-white px-8 py-4 rounded-full opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#D98C8C] hover:shadow-xl focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2"
-                                    aria-label="Add {{ $product->name }} to cart">
-                                Add to Cart
-                            </button>
+                            <form method="POST" action="{{ route('cart.add') }}" class="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transform translate-y-4 group-hover:translate-y-0 group-focus-within:translate-y-0 transition-all duration-300">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="hidden" name="qty" value="1">
+                                <button type="submit" class="bg-[#7AA374] text-white px-8 py-4 rounded-full hover:bg-[#D98C8C] focus:bg-[#D98C8C] hover:shadow-xl focus:shadow-xl focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2 focus:outline-none transition-all duration-300"
+                                        aria-label="Add {{ $product->name }} to cart">
+                                    Add to Cart
+                                </button>
+                            </form>
                         </div>
 
                         <!-- Signature Badge -->
@@ -114,8 +119,20 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full text-center py-12">
-                    <p class="text-[#402A1E] text-lg">No products found matching your criteria.</p>
+                <div class="col-span-full text-center py-16">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-24 h-24 mx-auto mb-6 bg-[#F6F1EA] rounded-full flex items-center justify-center">
+                            <svg class="w-12 h-12 text-[#BFA58A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-[PlayfairDisplay] font-bold text-[#402A1E] mb-3">No Products Found</h3>
+                        <p class="text-[#7AA374] text-sm mb-6">We couldn't find any products matching your search criteria. Try adjusting your filters or search terms.</p>
+                        <a href="{{ route('menu') }}"
+                           class="inline-block px-6 py-3 bg-[#7AA374] text-white rounded-full font-semibold hover:bg-[#D98C8C] hover:shadow-xl transition-all duration-300">
+                            View All Products
+                        </a>
+                    </div>
                 </div>
             @endforelse
         </div>

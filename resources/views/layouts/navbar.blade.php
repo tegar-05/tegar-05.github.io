@@ -4,7 +4,7 @@
     :class="scrolled
         ? 'backdrop-blur-xl bg-white/80 shadow-lg h-16'
         : 'backdrop-blur-xl bg-white/60 h-20'"
-    class="fixed top-0 left-0 w-full z-50 border-b border-[#d9c48c]/40 transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)] animate-fadeDown"
+    class="fixed top-0 left-0 w-full z-50 border-b border-[#d9c48c]/40 transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)] animate-fadeDown relative"
 >
     <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
 
@@ -25,10 +25,10 @@
             @foreach (['Home'=>'/', 'Menu'=>'/menu', 'Florist'=>'/florist', 'Reservation'=>'/reservation', 'About'=>'/about'] as $name => $url)
                 <li>
                     <a href="{{ $url }}"
-                       class="relative hover:text-[#b59a54] transition duration-300
+                       class="relative hover:text-[#b59a54] focus:text-[#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition duration-300 rounded
                        after:absolute after:left-0 after:-bottom-1 after:w-0 after:h-[2px] after:bg-[#b59a54]
-                       hover:after:w-full after:transition-all after:duration-500 after:ease-out
-                       hover:after:shadow-[0_0_6px_#b59a54]"
+                       hover:after:w-full focus:after:w-full after:transition-all after:duration-500 after:ease-out
+                       hover:after:shadow-[0_0_6px_#b59a54] focus:after:shadow-[0_0_6px_#b59a54]"
                     >
                         {{ $name }}
                     </a>
@@ -37,37 +37,52 @@
         </ul>
 
         <!-- Icons and Mobile Menu Button -->
-        <div class="flex items-center gap-5">
-            <button class="text-[#0c4740] hover:text-[#b59a54] transition duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center">
+        <div class="flex items-center gap-3 md:gap-5">
+            <button class="text-[#0c4740] hover:text-[#b59a54] focus:text-[#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center rounded">
                 <i class="fa-solid fa-magnifying-glass text-xl"></i>
             </button>
-            <button class="text-[#0c4740] hover:text-[#b59a54] transition duration-300 relative min-h-[44px] min-w-[44px] flex items-center justify-center">
-                <i class="fa-regular fa-heart text-xl"></i>
-            </button>
+            <a href="{{ route('cart.index') }}" class="text-[#0c4740] hover:text-[#b59a54] focus:text-[#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition duration-300 relative min-h-[44px] min-w-[44px] flex items-center justify-center rounded">
+                <i class="fa-solid fa-shopping-cart text-xl"></i>
+                @if(count(session('cart', [])) > 0)
+                    <span class="absolute -top-2 -right-2 bg-[#b59a54] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                        {{ array_sum(array_column(session('cart', []), 'qty')) }}
+                    </span>
+                @endif
+            </a>
             <a href="/reservation"
-               class="hidden md:block bg-[#0c4740] text-white px-8 py-4 rounded-full text-sm font-serif border border-[#b59a54]/40
-               hover:bg-[#145c53] hover:shadow-[0_0_8px_#b59a54] transition-all duration-500 min-h-[44px] flex items-center">
+               class="hidden md:block bg-[#0c4740] text-white px-6 md:px-8 py-3 md:py-4 rounded-full text-sm font-serif border border-[#b59a54]/40
+               hover:bg-[#145c53] focus:bg-[#145c53] hover:shadow-[0_0_8px_#b59a54] focus:shadow-[0_0_8px_#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition-all duration-500 min-h-[44px] flex items-center">
                 Book Table
             </a>
             <!-- Hamburger Menu Button -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-[#0c4740] hover:text-[#b59a54] transition duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center">
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-[#0c4740] hover:text-[#b59a54] focus:text-[#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition duration-300 min-h-[44px] min-w-[44px] flex items-center justify-center rounded">
                 <i class="fa-solid fa-bars text-xl"></i>
             </button>
         </div>
     </div>
 
     <!-- Mobile Menu -->
-    <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2" class="bg-white/95 backdrop-blur-xl border-t border-[#d9c48c]/40">
+    <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2" class="absolute top-full left-0 w-full bg-white/95 backdrop-blur-xl border-t border-[#d9c48c]/40 z-40">
         <ul class="flex flex-col items-center gap-6 py-6 font-serif text-lg text-[#0c4740]">
             @foreach (['Home'=>'/', 'Menu'=>'/menu', 'Florist'=>'/florist', 'Reservation'=>'/reservation', 'About'=>'/about'] as $name => $url)
                 <li>
-                    <a href="{{ $url }}" @click="mobileMenuOpen = false" class="hover:text-[#b59a54] transition duration-300 min-h-[44px] flex items-center">
+                    <a href="{{ $url }}" @click="mobileMenuOpen = false" class="hover:text-[#b59a54] focus:text-[#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition duration-300 min-h-[44px] flex items-center rounded">
                         {{ $name }}
                     </a>
                 </li>
             @endforeach
             <li>
-                <a href="/reservation" @click="mobileMenuOpen = false" class="bg-[#0c4740] text-white px-6 py-3 rounded-full text-sm font-serif border border-[#b59a54]/40 hover:bg-[#145c53] hover:shadow-[0_0_8px_#b59a54] transition-all duration-500 min-h-[44px] flex items-center">
+                <a href="{{ route('cart.index') }}" @click="mobileMenuOpen = false" class="hover:text-[#b59a54] focus:text-[#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition duration-300 min-h-[44px] flex items-center relative rounded">
+                    Cart
+                    @if(count(session('cart', [])) > 0)
+                        <span class="ml-2 bg-[#b59a54] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                            {{ array_sum(array_column(session('cart', []), 'qty')) }}
+                        </span>
+                    @endif
+                </a>
+            </li>
+            <li>
+                <a href="/reservation" @click="mobileMenuOpen = false" class="bg-[#0c4740] text-white px-6 py-3 rounded-full text-sm font-serif border border-[#b59a54]/40 hover:bg-[#145c53] focus:bg-[#145c53] hover:shadow-[0_0_8px_#b59a54] focus:shadow-[0_0_8px_#b59a54] focus:outline-none focus:ring-2 focus:ring-[#b59a54] focus:ring-offset-2 transition-all duration-500 min-h-[44px] flex items-center">
                     Book Table
                 </a>
             </li>
@@ -82,6 +97,6 @@
     100% { opacity: 1; transform: translateY(0); }
 }
 .animate-fadeDown {
-    animation: fadeDown 1s ease forwards;
+    animation: fadeDown 0.8s ease-out forwards;
 }
 </style>

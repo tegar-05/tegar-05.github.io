@@ -1,95 +1,129 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- Dynamic Meta Tags --}}
-    <title>{{ $seo['title'] ?? \App\Helpers\SeoHelper::getTitle() }}</title>
-    <meta name="description" content="{{ $seo['description'] ?? \App\Helpers\SeoHelper::getDescription() }}">
-    <meta name="keywords" content="{{ $seo['keywords'] ?? \App\Helpers\SeoHelper::getKeywords() }}">
+    <title>@yield('title', config('app.name', 'Madame Djeli'))</title>
 
-    {{-- Canonical URL --}}
-    <link rel="canonical" href="{{ $seo['canonical'] ?? \App\Helpers\SeoHelper::getCanonicalUrl() }}">
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="@yield('description', 'Madame Djeli - Premium Caffe & Florest experience with curated coffee and floral artistry')">
+    <meta name="keywords" content="coffee, floral, cafe, restaurant, Madame Djeli, Bandung">
 
-    {{-- Open Graph --}}
-    @php
-        $og = $seo['og'] ?? \App\Helpers\SeoHelper::getOpenGraph();
-    @endphp
-    <meta property="og:title" content="{{ $og['og:title'] }}">
-    <meta property="og:description" content="{{ $og['og:description'] }}">
-    <meta property="og:image" content="{{ $og['og:image'] }}">
-    <meta property="og:url" content="{{ $og['og:url'] }}">
-    <meta property="og:type" content="{{ $og['og:type'] }}">
-    <meta property="og:site_name" content="{{ $og['og:site_name'] }}">
+    <!-- Open Graph -->
+    <meta property="og:title" content="@yield('title', 'Madame Djeli - Caffe & Florest')">
+    <meta property="og:description" content="@yield('description', 'Premium caffe and florest experience')">
+    <meta property="og:image" content="@yield('og_image', asset('images/logo-djeli.png'))">
+    <meta property="og:url" content="{{ url()->current() }}">
 
-    {{-- Twitter Card --}}
-    @php
-        $twitter = $seo['twitter'] ?? \App\Helpers\SeoHelper::getTwitterCard();
-    @endphp
-    <meta name="twitter:card" content="{{ $twitter['twitter:card'] }}">
-    <meta name="twitter:title" content="{{ $twitter['twitter:title'] }}">
-    <meta name="twitter:description" content="{{ $twitter['twitter:description'] }}">
-    <meta name="twitter:image" content="{{ $twitter['twitter:image'] }}">
-    <meta name="twitter:site" content="{{ $twitter['twitter:site'] }}">
+    <!-- Additional SEO Meta Tags -->
+    <meta name="author" content="Madame Djeli">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url()->current() }}">
 
-    {{-- Favicon --}}
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
-    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'Madame Djeli - Caffe & Florest')">
+    <meta name="twitter:description" content="@yield('description', 'Premium caffe and florest experience')">
+    <meta name="twitter:image" content="@yield('og_image', asset('images/logo-djeli.png'))">
 
-    {{-- Hreflang --}}
-    <link rel="alternate" hreflang="id" href="{{ url()->current() }}">
-    <link rel="alternate" hreflang="en" href="{{ url()->current() }}?lang=en">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Custom Styles -->
     <style>
-        /* Toast animation */
-        .toast-fade {
-            animation: fadeIn 0.5s ease-out forwards;
+        body {
+            font-family: 'Figtree', sans-serif;
         }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-20px); }
-            100% { opacity: 1; transform: translateY(0); }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
         }
     </style>
-
-    {{-- Schema.org JSON-LD --}}
-    @php
-        $schemas = $seo['schemas'] ?? [];
-        if (!isset($schemas['organization'])) {
-            $schemas['organization'] = \App\Helpers\SeoHelper::getOrganizationSchema();
-        }
-        if (!isset($schemas['website'])) {
-            $schemas['website'] = \App\Helpers\SeoHelper::getWebsiteSchema();
-        }
-    @endphp
-    @foreach($schemas as $schema)
-        <script type="application/ld+json">
-            {{ json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) }}
-        </script>
-    @endforeach
 </head>
-<body class="bg-[#faf6ef] text-gray-900 font-sans">
-
-    {{-- Toast --}}
-    @if(session('success'))
-        <div class="fixed top-5 right-5 bg-green-500 text-white px-6 py-4 rounded-xl shadow-xl z-50 toast-fade">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    {{-- NAVBAR --}}
+<body class="font-sans antialiased bg-[#F6F1EA] text-[#402A1E]">
     @include('layouts.navbar')
 
-    {{-- CONTENT --}}
-    <main>
+    <!-- Page Content -->
+    <main class="relative">
         @yield('content')
     </main>
 
-    {{-- FOOTER --}}
-    @include('layouts.footer')
+    <!-- Footer -->
+    <footer class="bg-[#402A1E] text-white py-12 mt-24">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <img src="/images/logo-djeli.png" alt="Madame Djeli" class="h-8">
+                        <span class="font-serif text-xl text-white">Madame Djeli</span>
+                    </div>
+                    <p class="text-[#BFA58A] mb-4 leading-relaxed">
+                        Where the aroma of curated coffee blends with the elegance of handcrafted floral art.
+                        A premium space designed for comfort, beauty, and unforgettable taste.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-[#BFA58A] hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-[#BFA58A] hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-[#BFA58A] hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
 
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="font-serif text-lg mb-4">Quick Links</h3>
+                    <ul class="space-y-2 text-[#BFA58A]">
+                        <li><a href="{{ route('home') }}" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="{{ route('menu') }}" class="hover:text-white transition-colors">Menu</a></li>
+                        <li><a href="{{ route('florist') }}" class="hover:text-white transition-colors">Florist</a></li>
+                        <li><a href="{{ route('reservation') }}" class="hover:text-white transition-colors">Reservation</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-white transition-colors">About</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h3 class="font-serif text-lg mb-4">Contact</h3>
+                    <ul class="space-y-2 text-[#BFA58A]">
+                        <li>Jl. Melati Indah No. 21</li>
+                        <li>Bandung, Jawa Barat</li>
+                        <li>Indonesia</li>
+                        <li class="mt-4">
+                            <a href="tel:+62211234567" class="hover:text-white transition-colors">
+                                +62 21 1234 567
+                            </a>
+                        </li>
+                        <li>
+                            <a href="mailto:info@madamedjeli.com" class="hover:text-white transition-colors">
+                                info@madamedjeli.com
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-[#BFA58A]/20 mt-8 pt-8 text-center text-[#BFA58A]">
+                <p>&copy; {{ date('Y') }} Madame Djeli. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

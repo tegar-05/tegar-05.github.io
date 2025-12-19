@@ -35,6 +35,30 @@ class ImageHelper
     }
 
     /**
+     * Optimize and store uploaded image
+     */
+    public static function optimizeAndStore($file, $directory)
+    {
+        // Generate unique filename
+        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+        // Define path
+        $path = public_path('storage/' . $directory);
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+        $fullPath = $path . '/' . $filename;
+
+        // Move the file to public/storage
+        $file->move($path, $filename);
+
+        // Compress and optimize the image
+        self::compressImage($file, $fullPath, $filename);
+
+        return $directory . '/' . $filename;
+    }
+
+    /**
      * Generate responsive image sizes
      */
     public static function generateResponsiveImages($originalPath, $filename)

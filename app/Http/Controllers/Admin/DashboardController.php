@@ -29,16 +29,16 @@ class DashboardController extends Controller
         $revenueToday = (int) Order::whereDate('created_at', $today)->sum('total');
 
         // top sold product (by order_items table or pivot)
-        // Example if you have order_items table with product_id and qty:
+        // Example if you have order_items table with product_id and quantity:
         $topProduct = DB::table('order_items')
-            ->select('product_id', DB::raw('SUM(qty) as total_qty'))
+            ->select('product_id', DB::raw('SUM(quantity) as total_qty'))
             ->groupBy('product_id')
             ->orderByDesc('total_qty')
             ->limit(1)
             ->first();
 
         $topProductName = null;
-        if ($topProduct) {
+        if ($topProduct && $topProduct->product_id) {
             $product = Product::find($topProduct->product_id);
             $topProductName = $product ? $product->name : null;
         }

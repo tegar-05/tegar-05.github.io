@@ -11,7 +11,7 @@ class OrderItem extends Model
 
     protected $fillable = [
         'order_id',
-        'menu_id',
+        'product_id',
         'quantity',
         'price',
         'line_total',
@@ -29,9 +29,9 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
-    // Relasi ke Menu
-    public function menu()
+    // Relasi ke Product
+    public function product()
     {
-        return $this->belongsTo(Menu::class);
+        return $this->belongsTo(Product::class);
     }
 }

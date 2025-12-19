@@ -98,8 +98,8 @@ class AdminSliderController extends Controller
     public function destroy(Slider $slider)
     {
         // Delete image
-        if ($slider->image && Storage::disk('public')->exists($slider->image)) {
-            Storage::disk('public')->delete($slider->image);
+        if ($slider->image && file_exists(public_path('storage/' . $slider->image))) {
+            unlink(public_path('storage/' . $slider->image));
         }
 
         $slider->delete();

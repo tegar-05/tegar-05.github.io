@@ -1,54 +1,66 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Http\Requests\CheckoutRequest;
 
 class CheckoutController extends Controller
 {
     public function show()
     {
         $cart = session('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('menu')->with('error', 'Your cart is empty');
+        }
         return view('checkout', compact('cart'));
     }
 
-    public function process(Request $r)
+    public function process(CheckoutRequest $request)
     {
         $cart = session('cart', []);
-        if(empty($cart)) return back()->with('error', 'Cart empty');
+        if (empty($cart)) {
+            return redirect()->route('menu')->with('error', 'Your cart is empty');
+        }
 
-        $subtotal = array_sum(array_map(fn($i)=> $i['price']*$i['qty'], $cart));
+        $total = array_sum(array_map(fn($item) => $item['price'] * $item['qty'], $cart));
+
+        // Set initial status based on payment method
+        $status = match($request->payment_method) {
+            'cod' => 'pending',
+            'bank_transfer' => 'awaiting_payment',
+            'midtrans' => 'pending_payment',
+            default => 'pending'
+        };
 
         $order = Order::create([
-            'order_number'=>'MD'.time(),
-            'customer_name'=>$r->name,
-            'phone'=>$r->phone,
-            'address'=>$r->address,
-            'subtotal'=>$subtotal,
-            'total'=>$subtotal,
+            'customer_name' => $request->customer_name,
+            'customer_phone' => $request->customer_phone,
+            'customer_address' => $request->customer_address,
+            'payment_method' => $request->payment_method,
+            'total' => $total,
+            'status' => $status,
         ]);
 
-            foreach($cart as $c) {
-            $order->items()->create([
-            'menu_id' => $c['id'],
-            'quantity' => $c['qty'],
-            'price' => $c['price'],
-            'line_total' => $c['price']*$c['qty'],
-                ]);
+        foreach ($cart as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item['id'],
+                'quantity' => $item['qty'],
+                'price' => $item['price'],
+                'line_total' => $item['price'] * $item['qty'],
+            ]);
         }
 
         session()->forget('cart');
 
-        // Prepare WA message
-        $message = "New order #{$order->order_number}\nTotal: Rp {$order->total}\nCustomer: {$order->customer_name}\nItems:\n";
-        foreach($order->items as $i) $message .= "- {$i->menu->name} x {$i->quantity}\n";
+        return redirect()->route('checkout.success', $order);
+    }
 
-        $wa = "https://wa.me/628123456789?text=" . urlencode($message);
-
-        // Redirect
-        // Setelah menyimpan order
-return redirect()->route('payment.process', ['order_id' => $order->id]);
-
+    public function success(Order $order)
+    {
+        return view('checkout-success', compact('order'));
     }
 }

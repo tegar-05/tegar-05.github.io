@@ -40,7 +40,7 @@
             <div class="bg-white rounded-2xl shadow-lg p-8">
                 <h2 class="text-2xl font-[PlayfairDisplay] font-bold text-[#402A1E] mb-6">Customer Information</h2>
 
-                <form action="{{ route('payment.process') }}" method="POST" class="space-y-6">
+                <form action="{{ route('checkout.process') }}" method="POST" class="space-y-6">
                     @csrf
 
                     <!-- Customer Details -->

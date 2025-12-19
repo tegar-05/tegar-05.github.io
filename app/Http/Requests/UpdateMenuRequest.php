@@ -47,4 +47,15 @@ class UpdateMenuRequest extends FormRequest
             'is_active' => 'active status',
         ];
     }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'name' => strip_tags(trim($this->name)),
+            'description' => strip_tags(trim($this->description ?? '')),
+        ]);
+    }
 }

@@ -25,6 +25,7 @@ class CheckoutRequest extends FormRequest
             'customer_name' => 'required|string|max:255|regex:/^[a-zA-Z\s]+$/',
             'customer_phone' => 'required|string|regex:/^[0-9+\-\s]+$/|max:20',
             'customer_address' => 'required|string|max:500|min:10',
+            'payment_method' => 'required|in:cod,bank_transfer,midtrans',
         ];
     }
 

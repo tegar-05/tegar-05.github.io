@@ -9,68 +9,50 @@ use App\Models\User;
 
 class AdminAuthController extends Controller
 {
-    // Show login form
     public function loginPage()
     {
-        if (Auth::check() && Auth::user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return view('admin.login', ['error' => null]);
+        return view('admin.login');
     }
 
-    // Handle login
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:8',
+            'username' => 'required|string',
+            'password' => 'required',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $loginField = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
+        $credentials = [
+            $loginField => $request->username,
+            'password' => $request->password,
+        ];
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             if ($user->role === 'admin') {
-                $request->session()->regenerate();
                 return redirect()->route('admin.dashboard');
             } else {
                 Auth::logout();
-                return view('admin.login', ['error' => 'Access denied. Admin privileges required.']);
+                return back()->withErrors(['username' => 'You do not have admin access.']);
             }
         }
 
-        return view('admin.login', ['error' => 'Invalid email or password.']);
+        return back()->withErrors(['username' => 'Invalid credentials.']);
     }
 
-    // Dashboard
-    public function dashboard()
-    {
-        if (!Auth::check() || Auth::user()->role !== 'admin') {
-            return redirect()->route('admin.login');
-        }
-
-        try {
-            $ordersToday = \App\Models\Order::whereDate('created_at', now())->count();
-            $revenueToday = \App\Models\Order::whereDate('created_at', now())->sum('total');
-            $topProduct = \App\Models\Product::orderByDesc('sold')->value('name') ?? 'No data';
-            $recentOrders = \App\Models\Order::with('user')->latest()->take(5)->get();
-        } catch (\Exception $e) {
-            $ordersToday = 0;
-            $revenueToday = 0;
-            $topProduct = 'No data';
-            $recentOrders = collect();
-        }
-
-        return view('admin.dashboard.index', compact('ordersToday', 'revenueToday', 'topProduct', 'recentOrders'));
-    }
-
-    // Logout
-    public function logout(Request $request)
+    public function logout()
     {
         Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('admin.login');
+        return redirect('/admin/login');
+    }
+
+    public function dashboard()
+    {
+        $totalProducts = \App\Models\Product::count();
+        $totalOrders = \App\Models\Order::count();
+        $totalUsers = User::count();
+        $recentOrders = \App\Models\Order::latest()->take(5)->get();
+
+        return view('admin.dashboard.index', compact('totalProducts', 'totalOrders', 'totalUsers', 'recentOrders'));
     }
 }

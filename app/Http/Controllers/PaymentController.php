@@ -25,6 +25,14 @@ class PaymentController extends Controller
         // Calculate total
         $total = array_sum(array_map(fn($item) => $item['price'] * $item['qty'], $cart));
 
+        // Set initial status based on payment method
+        $status = match($validated['payment_method']) {
+            'cod' => 'pending',
+            'bank_transfer' => 'awaiting_payment',
+            'midtrans' => 'pending_payment',
+            default => 'pending'
+        };
+
         // Create order
         $order = Order::create([
             'customer_name' => $validated['customer_name'],
@@ -32,7 +40,7 @@ class PaymentController extends Controller
             'customer_address' => $validated['customer_address'],
             'payment_method' => $validated['payment_method'],
             'total' => $total,
-            'status' => 'pending',
+            'status' => $status,
             'user_id' => auth()->id(),
         ]);
 
@@ -40,30 +48,41 @@ class PaymentController extends Controller
         foreach ($cart as $item) {
             OrderItem::create([
                 'order_id' => $order->id,
-                'product_name' => $item['name'],
+                'product_id' => $item['id'],
                 'quantity' => $item['qty'],
                 'price' => $item['price'],
-                'subtotal' => $item['price'] * $item['qty'],
+                'line_total' => $item['price'] * $item['qty'],
             ]);
         }
 
         // Clear cart
         session()->forget('cart');
 
-        // Send email notification
-        try {
-            Mail::to('admin@madamedjeli.com')->send(new NewOrderNotification($order));
-        } catch (\Exception $e) {
-            // Log error but don't fail the order
-            Log::error('Failed to send order notification email: ' . $e->getMessage());
+        // Handle Midtrans payment if selected
+        if ($validated['payment_method'] === 'midtrans') {
+            $redirectUrl = $this->processMidtransPayment($order, $request);
+            if ($redirectUrl) {
+                return redirect($redirectUrl);
+            }
+            // Fallback to COD if Midtrans fails
+            $order->update(['payment_method' => 'cod', 'status' => 'pending']);
         }
 
-        // WhatsApp notification
+        // Send email notification with proper error handling
+        try {
+            Mail::to('admin@madamedjeli.com')->send(new NewOrderNotification($order));
+            Log::info('Order notification email sent successfully for order #' . $order->id);
+        } catch (\Exception $e) {
+            Log::error('Failed to send order notification email for order #' . $order->id . ': ' . $e->getMessage());
+            // Continue processing - don't fail the order
+        }
+
+        // Generate WhatsApp deeplink (not actual API call)
         $message = "Pesanan baru #{$order->id}\nTotal: Rp " . number_format($total, 0, ',', '.') . "\nCustomer: {$request->customer_name}\nPayment: {$request->payment_method}";
         $phone = '628123456789';
         $waUrl = "https://wa.me/{$phone}?text=" . urlencode($message);
 
-        return redirect()->route('home')->with('success', 'Order placed successfully! Check WhatsApp for confirmation: ' . $waUrl);
+        return redirect()->route('home')->with('success', 'Order placed successfully!')->with('whatsapp_url', $waUrl);
     }
 
     private function processMidtransPayment($order, $request)

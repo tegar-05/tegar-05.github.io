@@ -2,27 +2,81 @@
 
 @section('content')
 
+{{-- Flash Messages --}}
+@if(session('success'))
+<div class="fixed top-4 right-4 z-50 max-w-sm bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg animate-fade-in">
+    <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        </svg>
+        <span>{{ session('success') }}</span>
+    </div>
+    @if(session('whatsapp_url'))
+    <div class="mt-2">
+        <a href="{{ session('whatsapp_url') }}" target="_blank" class="inline-flex items-center text-green-600 hover:text-green-800 font-medium">
+            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
+            </svg>
+            Send WhatsApp Confirmation
+        </a>
+    </div>
+    @endif
+</div>
+@endif
+
+@if(session('error'))
+<div class="fixed top-4 right-4 z-50 max-w-sm bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg animate-fade-in">
+    <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+        </svg>
+        <span>{{ session('error') }}</span>
+    </div>
+</div>
+@endif
+
 {{-- ============================
      HERO SECTION PREMIUM
 ============================= --}}
 <section class="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden">
 
-    <!-- Hero Background Image -->
+    <!-- Hero Background Slider -->
     <div class="absolute inset-0">
-        <img src="/images/interior/interior-hero.jpg" alt="Madame Djeli Interior"
-             class="w-full h-full object-cover parallax-bg" loading="lazy">
+        @forelse($sliders as $slider)
+            <div class="hero-slide {{ $loop->first ? 'active' : '' }}"
+                 style="background-image: url('{{ $slider->image ? asset('storage/' . $slider->image) : asset('images/interior/interior-hero.jpg') }}')">
+            </div>
+        @empty
+            <img src="/images/interior/interior-hero.jpg" alt="Madame Djeli Interior"
+                 class="w-full h-full object-cover parallax-bg" loading="lazy">
+        @endforelse
+
+        <!-- Loading Skeleton for Slider -->
+        <div class="hero-skeleton absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse">
+            <div class="absolute inset-0 bg-gradient-to-r from-[#BFA58A]/20 via-[#D98C8C]/20 to-[#7AA374]/20"></div>
+        </div>
     </div>
+
+    <!-- Slider Navigation (if multiple slides) -->
+    @if($sliders->count() > 1)
+    <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-10 flex space-x-2">
+        @foreach($sliders as $index => $slider)
+            <button class="slider-dot w-3 h-3 rounded-full bg-white/50 hover:bg-white transition-colors {{ $index === 0 ? 'bg-white' : '' }}"
+                    data-slide="{{ $index }}"></button>
+        @endforeach
+    </div>
+    @endif
 
     <!-- Warm Color Overlay -->
     <div class="absolute inset-0 bg-gradient-to-r from-[#BFA58A]/80 via-[#D98C8C]/60 to-[#7AA374]/80"></div>
 
     <!-- Floral Shadow Decoration -->
-    <div class="absolute top-0 right-0 w-[380px] opacity-40 blur-sm animate-float-slow">
+    <div class="absolute top-0 right-0 w-[380px] opacity-40 blur-sm animate-float-slow pointer-events-none">
         <img src="/images/hero-brush.jpeg" alt="" loading="lazy">
     </div>
 
-    <div class="absolute bottom-0 left-0 w-[300px] opacity-40 blur-sm animate-float-medium">
-        <img src="/images/floral/floral-decor2.png" alt="" loading="lazy">
+    <div class="absolute bottom-0 left-0 w-[300px] opacity-40 blur-sm animate-float-medium pointer-events-none">
+        <img src="/images/hero-brush.jpeg" alt="Decorative floral element" loading="lazy">
     </div>
 
     <!-- Content -->
@@ -43,15 +97,15 @@
         <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a href="{{ route('reservation') }}"
                class="px-8 py-4 bg-[#7AA374] text-white rounded-full text-lg shadow-lg
-                      hover:bg-[#D98C8C] hover:shadow-xl transition-all duration-300 hover:scale-105
-                      tracking-wide font-semibold focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2"
+                      hover:bg-[#D98C8C] focus:bg-[#D98C8C] hover:shadow-xl focus:shadow-xl transition-all duration-300 hover:scale-105 focus:scale-105
+                      tracking-wide font-semibold focus:ring-2 focus:ring-[#7AA374] focus:ring-offset-2 focus:outline-none"
                aria-label="Reserve a table at Madame Djeli">
                 Reserve Now
             </a>
             <a href="{{ route('menu') }}"
                class="px-8 py-4 bg-transparent border-2 border-[#F6F1EA] text-[#F6F1EA] rounded-xl text-lg
-                      hover:bg-[#F6F1EA] hover:text-[#402A1E] hover:shadow-xl transition-all duration-300 hover:scale-105
-                      tracking-wide font-semibold focus:ring-2 focus:ring-[#F6F1EA] focus:ring-offset-2"
+                      hover:bg-[#F6F1EA] focus:bg-[#F6F1EA] hover:text-[#402A1E] focus:text-[#402A1E] hover:shadow-xl focus:shadow-xl transition-all duration-300 hover:scale-105 focus:scale-105
+                      tracking-wide font-semibold focus:ring-2 focus:ring-[#F6F1EA] focus:ring-offset-2 focus:outline-none"
                aria-label="View our menu">
                 See Menu
             </a>
@@ -61,22 +115,59 @@
 
 </section>
 
-<!-- Hero Parallax Script -->
+<!-- Hero Slider JavaScript -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const parallaxBg = document.querySelector('.parallax-bg');
-    let lastScrollY = window.scrollY;
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('.slider-dot');
+    let currentSlide = 0;
+    let slideInterval;
 
-    function updateParallax() {
-        const scrollY = window.scrollY;
-        const speed = 0.5;
-        const yPos = -(scrollY * speed);
-        parallaxBg.style.transform = `translateY(${yPos}px)`;
-        lastScrollY = scrollY;
-        requestAnimationFrame(updateParallax);
+    function showSlide(index) {
+        // Hide all slides
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('bg-white'));
+
+        // Show current slide
+        slides[index].classList.add('active');
+        dots[index].classList.add('bg-white');
+
+        currentSlide = index;
     }
 
-    updateParallax();
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    }
+
+    function startAutoSlide() {
+        slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+    }
+
+    function stopAutoSlide() {
+        clearInterval(slideInterval);
+    }
+
+    // Add click events to dots
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            showSlide(index);
+            stopAutoSlide();
+            startAutoSlide(); // Restart auto slide after manual interaction
+        });
+    });
+
+    // Pause auto slide on hover
+    const heroSection = document.querySelector('section.relative.w-full.min-h-\\[90vh\\]');
+    if (heroSection) {
+        heroSection.addEventListener('mouseenter', stopAutoSlide);
+        heroSection.addEventListener('mouseleave', startAutoSlide);
+    }
+
+    // Start auto slide if there are multiple slides
+    if (slides.length > 1) {
+        startAutoSlide();
+    }
 });
 </script>
 
@@ -86,9 +177,11 @@ document.addEventListener("DOMContentLoaded", () => {
 <section class="py-24 bg-[#F6F1EA] relative overflow-hidden">
 
     {{-- Soft floral shadows --}}
-    <img src="/images/floral/floral-soft1.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Decorative floral pattern"
          class="absolute top-0 left-0 w-72 opacity-[12%] blur-sm pointer-events-none">
-    <img src="/images/floral/floral-soft2.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Decorative floral pattern"
          class="absolute bottom-0 right-0 w-80 opacity-[12%] blur-sm pointer-events-none">
 
     <div class="max-w-7xl mx-auto px-6 relative">
@@ -106,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
 
         {{-- Signature & Flores Products --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             @forelse($signatureProducts as $product)
                 <div class="group relative bg-white rounded-xl overflow-hidden shadow-lg
                             hover:shadow-xl hover:-translate-y-2 transition-all duration-700
@@ -181,11 +274,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <!-- Soft Floral Decoration -->
     <div class="absolute top-10 left-0 w-[260px] opacity-30 pointer-events-none">
-        <img src="/images/floral/floral-soft1.png" alt="">
+        <img src="/images/hero-brush.jpeg" alt="Decorative floral pattern">
     </div>
 
     <div class="absolute bottom-10 right-0 w-[280px] opacity-30 pointer-events-none">
-        <img src="/images/floral/floral-soft2.png" alt="">
+        <img src="/images/hero-brush.jpeg" alt="Decorative floral pattern">
     </div>
 
     <div class="relative max-w-6xl mx-auto px-6">
@@ -241,7 +334,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
             <div class="group relative overflow-hidden rounded-2xl shadow-lg">
-                <img src="/images/interior/interior1.jpg"
+                <img src="/images/dish1.png"
+                     alt="Premium Coffee Corner at Madame Djeli"
                      class="w-full h-[320px] object-cover transition duration-700 group-hover:scale-110" loading="lazy">
                 <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
                     <h3 class="text-white text-xl font-[PlayfairDisplay]">
@@ -251,7 +345,8 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
 
             <div class="group relative overflow-hidden rounded-2xl shadow-lg">
-                <img src="/images/interior/interior2.jpg"
+                <img src="/images/dish2.png"
+                     alt="Botanical Aesthetic Room at Madame Djeli"
                      class="w-full h-[320px] object-cover transition duration-700 group-hover:scale-110" loading="lazy">
                 <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
                     <h3 class="text-white text-xl font-[PlayfairDisplay]">
@@ -261,7 +356,8 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
 
             <div class="group relative overflow-hidden rounded-2xl shadow-lg">
-                <img src="/images/interior/interior3.jpg"
+                <img src="/images/dish3.png"
+                     alt="Elegant Florist Gallery at Madame Djeli"
                      class="w-full h-[320px] object-cover transition duration-700 group-hover:scale-110" loading="lazy">
                 <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
                     <h3 class="text-white text-xl font-[PlayfairDisplay]">
@@ -297,13 +393,13 @@ document.addEventListener("DOMContentLoaded", () => {
     <!-- Floating Petals / Premium Particle Effect -->
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
         <div class="animate-float-slow absolute w-16 opacity-30 top-10 left-20">
-            <img src="/images/floral/petal1.png" alt="">
+            <img src="/images/hero-brush.jpeg" alt="Decorative floral element">
         </div>
         <div class="animate-float-medium absolute w-20 opacity-25 bottom-10 right-32">
-            <img src="/images/floral/petal2.png" alt="">
+            <img src="/images/hero-brush.jpeg" alt="Decorative floral element">
         </div>
         <div class="animate-float-fast absolute w-14 opacity-40 top-40 right-10">
-            <img src="/images/floral/petal3.png" alt="">
+            <img src="/images/hero-brush.jpeg" alt="Decorative floral element">
         </div>
     </div>
 
@@ -330,16 +426,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             <!-- Item -->
             @foreach([
-                ['img'=>'bouquet1.jpg','title'=>'Signature Pink Bouquet'],
-                ['img'=>'bouquet2.jpg','title'=>'Cream Rose Harmony'],
-                ['img'=>'bouquet3.jpg','title'=>'Blush Seasonal Collection'],
+                ['img'=>'/images/dish1.png','title'=>'Signature Pink Bouquet'],
+                ['img'=>'/images/dish2.png','title'=>'Cream Rose Harmony'],
+                ['img'=>'/images/dish3.png','title'=>'Blush Seasonal Collection'],
             ] as $flower)
 
             <div class="group relative rounded-3xl overflow-hidden shadow-2xl
                         transform-gpu transition-all duration-700 hover:rotate-[-2deg] hover:scale-[1.04]
                         parallax-card focus-within:ring-2 focus-within:ring-[#D4A373] focus-within:ring-offset-2">
 
-                <img src="/images/flowers/{{ $flower['img'] }}"
+                <img src="{{ $flower['img'] }}"
                      alt="{{ $flower['title'] }} - Beautiful floral arrangement at Madame Djeli"
                      class="w-full h-[420px] object-cover transition duration-700
                             group-hover:scale-110 group-hover:brightness-90" loading="lazy">
@@ -365,7 +461,8 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="text-center mt-16 animate-fadein-slow">
             <a href="{{ route('florist') }}"
                class="px-8 py-4 bg-[#D4A373] text-white rounded-full text-lg font-semibold shadow-xl
-                      hover:bg-[#c08d60] hover:shadow-2xl hover:scale-110 transition-all duration-500">
+                      hover:bg-[#c08d60] focus:bg-[#c08d60] hover:shadow-2xl focus:shadow-2xl hover:scale-110 focus:scale-110 transition-all duration-500
+                      focus:ring-2 focus:ring-[#D4A373] focus:ring-offset-2 focus:outline-none">
                 Explore Full Florist Collection
             </a>
         </div>
@@ -377,6 +474,23 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- Custom Animations -->
 <style>
     .perspective-1000 { perspective: 1000px; }
+
+    /* Hero Slider Styles */
+    .hero-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+    .hero-slide.active {
+        opacity: 1;
+    }
 
     /* Floating petals */
     @keyframes float-slow { 0%{transform:translateY(0)} 100%{transform:translateY(-60px)} }
@@ -405,13 +519,15 @@ document.addEventListener("DOMContentLoaded", () => {
 <section class="relative py-24 bg-[#F3EEE8] overflow-hidden">
 
     <!-- Floral Soft Shadows -->
-    <img src="/images/floral/floral-soft1.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Floral soft shadow decoration"
          class="absolute top-0 left-0 w-[340px] opacity-25 blur-sm pointer-events-none">
-    <img src="/images/floral/floral-soft2.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Floral soft shadow decoration"
          class="absolute bottom-0 right-0 w-[380px] opacity-25 blur-sm pointer-events-none">
 
     <!-- Decorative Parallax Background -->
-    <div class="absolute inset-0 bg-[url('/images/paper-texture.png')]
+    <div class="absolute inset-0 bg-[url('/images/hero-brush.jpeg')]
                 bg-cover bg-center opacity-10"></div>
 
     <div class="max-w-7xl mx-auto px-8 relative">
@@ -421,7 +537,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <!-- LEFT SIDE: IMAGE WITH PARALLAX -->
             <div class="relative group overflow-hidden rounded-3xl shadow-2xl">
 
-                <img src="/images/about/djeli-experience.jpg"
+                <img src="/images/hero-brush.jpeg"
+                     alt="Madame Djeli experience - elegant cafe and florist space"
                      class="w-full h-[480px] object-cover transform transition duration-[1500ms]
                             group-hover:scale-110 parallax-image" loading="lazy">
 
@@ -476,16 +593,18 @@ document.addEventListener("mousemove", function(e) {
 <section class="relative py-24 overflow-hidden">
 
     <!-- Background floral texture -->
-    <div class="absolute inset-0 bg-[url('/images/bg-texture-gold.jpg')] bg-cover bg-center opacity-20"></div>
+    <div class="absolute inset-0 bg-[url('/images/hero-brush.jpeg')] bg-cover bg-center opacity-20"></div>
 
     <!-- Soft gold gradient -->
     <div class="absolute inset-0 bg-gradient-to-b from-[#f3e8db]/60 to-[#fff]"></div>
 
     <!-- Floating floral decorations -->
-    <img src="/images/floral/floral-soft1.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Decorative floral element"
          class="absolute top-0 right-0 w-[320px] opacity-40 blur-[1px] animate-fadeFloat" />
 
-    <img src="/images/floral/floral-soft2.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Decorative floral element"
          class="absolute bottom-0 left-0 w-[260px] opacity-40 blur-[2px] animate-fadeFloat2" />
 
     <!-- Content -->
@@ -553,10 +672,12 @@ document.addEventListener("mousemove", function(e) {
 <section class="relative py-24 bg-[#faf6ef] overflow-hidden">
 
     <!-- Soft floral decorations -->
-    <img src="/images/floral/floral-soft3.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Soft floral decoration"
          class="absolute top-0 left-0 w-[260px] opacity-30 blur-sm animate-slowFloat">
 
-    <img src="/images/floral/floral-soft4.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Soft floral decoration"
          class="absolute bottom-0 right-0 w-[300px] opacity-30 blur-sm animate-slowFloat2">
 
     <div class="relative max-w-6xl mx-auto px-6 text-center">
@@ -575,20 +696,21 @@ document.addEventListener("mousemove", function(e) {
         <div class="columns-1 sm:columns-2 md:columns-3 gap-5 space-y-5">
 
             @foreach ([
-                '/images/gallery/g1.jpg',
-                '/images/gallery/g2.jpg',
-                '/images/gallery/g3.jpg',
-                '/images/gallery/g4.jpg',
-                '/images/gallery/g5.jpg',
-                '/images/gallery/g6.jpg',
-                '/images/gallery/g7.jpg',
-                '/images/gallery/g8.jpg',
+                '/images/dish1.png',
+                '/images/dish2.png',
+                '/images/dish3.png',
+                '/images/hero-brush.jpeg',
+                '/images/dish1.png',
+                '/images/dish2.png',
+                '/images/dish3.png',
+                '/images/hero-brush.jpeg',
             ] as $img)
                 <div class="break-inside-avoid overflow-hidden rounded-2xl shadow-lg border border-[#f0e6d8]
                             hover:scale-[1.01] hover:shadow-2xl transition-all duration-500 group">
 
                     <!-- Image -->
                     <img src="{{ $img }}"
+                         alt="Madame Djeli gallery image - elegant cafe and florist atmosphere"
                          class="w-full object-cover rounded-2xl group-hover:scale-110
                                 transition-transform duration-700 ease-out" loading="lazy">
 
@@ -607,11 +729,13 @@ document.addEventListener("mousemove", function(e) {
          class="relative py-24 bg-[#faf6ef] overflow-hidden">
 
     <!-- Floral Overlay Kiri -->
-    <img src="/images/floral/floral-decor2.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Background floral decoration"
          class="absolute left-0 top-0 w-[260px] opacity-20 blur-sm -z-10">
 
     <!-- Floral Overlay Kanan -->
-    <img src="/images/floral/floral-decor1.png"
+    <img src="/images/hero-brush.jpeg"
+         alt="Background floral decoration"
          class="absolute right-0 bottom-0 w-[300px] opacity-20 blur-sm -z-10">
 
     <div class="max-w-6xl mx-auto px-6">

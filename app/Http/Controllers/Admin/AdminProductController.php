@@ -85,8 +85,8 @@ class AdminProductController extends Controller
 
         if ($request->hasFile('image')) {
             // Delete old image
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
-                Storage::disk('public')->delete($product->image);
+            if ($product->image && file_exists(public_path('storage/' . $product->image))) {
+                unlink(public_path('storage/' . $product->image));
             }
             $data['image'] = ImageHelper::optimizeAndStore($request->file('image'), 'products');
         }
@@ -102,8 +102,8 @@ class AdminProductController extends Controller
     public function destroy(Product $product)
     {
         // Delete image
-        if ($product->image && Storage::disk('public')->exists($product->image)) {
-            Storage::disk('public')->delete($product->image);
+        if ($product->image && file_exists(public_path('storage/' . $product->image))) {
+            unlink(public_path('storage/' . $product->image));
         }
 
         $product->delete();
