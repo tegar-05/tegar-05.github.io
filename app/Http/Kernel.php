@@ -25,7 +25,4 @@
 
         // middleware admin
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
-
-        // security middleware
-        'enhanced.throttle' => \App\Http\Middleware\EnhancedRateLimit::class,
     ];
