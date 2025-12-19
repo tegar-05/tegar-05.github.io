@@ -1,9 +1,8 @@
 FROM serversideup/php:8.2-fpm-nginx
 
-WORKDIR /var/www/html
+ARG PHP_EXTENSIONS="intl pdo_mysql zip gd"
 
-# WAJIB: aktifkan extension SEBELUM composer install
-ENV PHP_EXTENSIONS="intl pdo_mysql zip gd"
+WORKDIR /var/www/html
 
 COPY . .
 
